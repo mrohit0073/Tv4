@@ -1,0 +1,64 @@
+name: Build TV Remote V3 APKs
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Phone and TV APKs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
+      - name: Verify project
+        run: |
+          test -f TVRemote/settings.gradle
+          test -f TVRemote/build.gradle
+          test -f TVRemote/mobile/build.gradle
+          test -f TVRemote/tv/build.gradle
+          echo "Project files OK."
+
+      - name: Build both APKs
+        working-directory: TVRemote
+        run: |
+          gradle --no-daemon --stacktrace :mobile:assembleDebug :tv:assembleDebug
+
+      - name: Collect APKs
+        run: |
+          set -e
+          mkdir -p artifacts
+          cp TVRemote/mobile/build/outputs/apk/debug/mobile-debug.apk artifacts/TVRemote-V3-Mobile.apk
+          cp TVRemote/tv/build/outputs/apk/debug/tv-debug.apk artifacts/TVRemote-V3-TV.apk
+          ls -lh artifacts
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: tv-remote-v3-apks
+          path: artifacts/*.apk
+          if-no-files-found: error
+          retention-days: 14

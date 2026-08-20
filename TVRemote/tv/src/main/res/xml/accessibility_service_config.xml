@@ -1,0 +1,9 @@
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeAllMask"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:notificationTimeout="10"
+    android:canRetrieveWindowContent="true"
+    android:canPerformGestures="true"
+    android:accessibilityFlags="flagDefault|flagReportViewIds|flagRetrieveInteractiveWindows"
+    android:description="@string/accessibility_description"
+    android:settingsActivity="com.tvremote.tv.MainActivity"/>

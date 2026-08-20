@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TV Remote Receiver V3</string>
+    <string name="accessibility_description">Allows TV Remote to display and control the on-screen pointer and interact with TV apps.</string>
+</resources>
